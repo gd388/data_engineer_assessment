@@ -89,3 +89,81 @@ Use **MySQL** and SQL for all database work
 ---
 
 **Good luck! We look forward to your submission.**
+
+
+
+# 🧱 Homellc Data Engineering Assessment – Quick Guide
+
+This project takes a flat CSV file and loads it into a **normalized MySQL database** using **Python ETL**.
+
+---
+
+## ⚙️ Main Steps
+
+### ✅ 1. Set up Python Virtual Environment
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+---
+
+### 🐳 2. Start MySQL via Docker
+
+```bash
+docker-compose -f docker-compose.initial.yml up --build -d
+```
+
+* Host: `localhost`, Port: `3306`
+* User: `db_user`, Password: `6equj5_db_user`
+* DB: `home_db`
+
+---
+
+### 🏗️ 3. Create Tables
+
+Run the following command to execute the SQL schema and create normalized tables inside the MySQL container:
+
+```bash
+docker exec -i mysql_ctn mysql -u db_user -p home_db < sql/00_init_db_dump.sql
+```
+
+> 🔒 **Note**: You'll be prompted to enter the password.
+> If you're scripting or using environment variables, consider using a `.env` file or Docker secrets for secure credential handling.
+
+
+---
+
+### 📥 4. Run ETL Script
+
+```bash
+python scripts/etl.py
+```
+
+* Reads `fake_data.csv`
+* Normalizes and loads data into MySQL using foreign keys
+
+---
+
+### 🔍 5. Verify
+
+```sql
+SELECT COUNT(*) FROM property;
+SELECT * FROM leads LIMIT 5;
+```
+
+---
+
+## 📁 Project Structure
+
+```
+sql/
+  ├── 00_init_db_dump.sql
+  └── fake_data.csv
+  └── etl.py
+requirements.txt
+docker-compose.initial.yml
+Dockerfile.initial_db
+```
